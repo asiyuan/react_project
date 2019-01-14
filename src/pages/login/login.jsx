@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Form, Icon, Input, Button} from 'antd'
 
-import logo from '../../assets/images/logo.png'
+import logo from '../../assets/images/logo1.jpg'
 import './index.less'
 
 export default class Login extends Component {
@@ -21,6 +21,13 @@ export default class Login extends Component {
 
             <LoginForm/>
           </div>
+        </div>
+        <div className="footer">
+
+          <h3>
+            <Icon type="zhihu" />
+            &nbsp;&nbsp;知乎，分享你刚编的故事
+          </h3>
         </div>
       </div>
     )
