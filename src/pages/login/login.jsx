@@ -1,12 +1,37 @@
 import React, {Component} from 'react';
 import {Form, Icon, Input, Button} from 'antd'
 
+import storageUtils from '../../utils/storageUtils'
 import logo from '../../assets/images/logo1.jpg'
+import {reqLogin} from '../../api/request'
+import MemoryUtils from '../../utils/MemoryUtils'
 import './index.less'
 
 export default class Login extends Component {
 
+  state = {
+    errorMsg: ''    //错误提示信息
+  }
+
+  login = async (user) => {
+    const result = await reqLogin(user)
+    if (result.status === 0) {
+      // 登陆成功
+      this.props.history.replace('/')
+      const user = result.data
+      storageUtils.saveUser(user)
+      MemoryUtils.user = user
+    } else {
+      // 登陆失败
+      this.setState({
+        errorMsg: result.msg
+      })
+    }
+  }
+
   render() {
+    const {errorMsg} = this.state
+
     return (
       <div className='login'>
         {/*头部导航*/}
@@ -17,9 +42,10 @@ export default class Login extends Component {
         {/*主体部分*/}
         <div className="login-content">
           <div className="login-box">
+            <div>{errorMsg}</div>
             <div className="title">User Login</div>
 
-            <LoginForm/>
+            <LoginForm login={this.login}/>
           </div>
         </div>
         <div className="footer">
@@ -37,12 +63,17 @@ export default class Login extends Component {
 
 class LoginForm extends Component {
 
-  // 提交数据
-  handleSumbit = (e) => {
-    e.preventDefault()
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
+  clickLogin = () => {
+
+    // 只有当验证没有错误时才输出输入的数据
+    this.props.form.validateFields(async (error, values) => {
+      console.log('validateFields', error, values)
+      if(!error) {
+        console.log(values)
+        this.props.login(values)
+
+      } else {
+        this.props.form.resetFields() // 重置所有输入框
       }
     })
   }
@@ -64,9 +95,8 @@ class LoginForm extends Component {
   checkPassword = (rule, value, callback) => {
     if (!value) {
       callback('请输入用密码！')
-    } else if (!/^\w+[0-9]+$/.test(value)) {
-      callback('密码必须是字母加数字的组合')
-    } else if (value.length < 4) {
+    }
+     else if (value.length < 4) {
       callback('密码至少4位')
     }else {
       callback()
@@ -77,11 +107,12 @@ class LoginForm extends Component {
 
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form className="login-form" onSubmit={this.handleSumbit}>
+      <Form className="login-form">
 
         {/*用户名验证*/}
         <Form.Item>
-          {getFieldDecorator('userName', {
+          {getFieldDecorator('username', {
+            initialValue: 'admin',
             rules: [{validator: this.checkUserName}]
           })(
             <Input prefix={<Icon type="user" />} placeholder="Username" autoComplete="off"/>
@@ -98,7 +129,7 @@ class LoginForm extends Component {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" onClick={this.loginSubmit} className="login-form-button">login</Button>
+          <Button type="primary" onClick={this.clickLogin} className="login-form-button">login</Button>
         </Form.Item>
       </Form>
     )
