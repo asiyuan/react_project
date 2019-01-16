@@ -4,7 +4,9 @@ export default class $Title$ extends Component {
 
   render() {
     return (
-      <div></div>
+      <div>
+
+      </div>
     )
   }
 }

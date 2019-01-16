@@ -42,7 +42,11 @@ export default class Login extends Component {
         {/*主体部分*/}
         <div className="login-content">
           <div className="login-box">
-            <div>{errorMsg}</div>
+            <div className="error-msg-wrap">
+              <div className={errorMsg ? 'show' : ''}>
+                {errorMsg}
+              </div>
+            </div>
             <div className="title">User Login</div>
 
             <LoginForm login={this.login}/>
@@ -69,7 +73,6 @@ class LoginForm extends Component {
     this.props.form.validateFields(async (error, values) => {
       console.log('validateFields', error, values)
       if(!error) {
-        console.log(values)
         this.props.login(values)
 
       } else {

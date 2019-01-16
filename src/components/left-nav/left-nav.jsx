@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
-import {NavLink} from 'react-router-dom'
+import {NavLink, withRouter} from 'react-router-dom'
 import {
-  Layout,
   Menu,
-  Breadcrumb,
   Icon,
 } from 'antd';
 
@@ -11,12 +9,10 @@ import './left-nav.less'
 import logo from '../../assets/images/logo1.jpg'
 import menuConfig from '../../config/menuConfig'
 
-const {
-  Header, Content, Footer, Sider,
-} = Layout;
+
 const SubMenu = Menu.SubMenu;
 
-export default class LeftNav extends Component {
+class LeftNav extends Component {
 
   getNodes = (arr) => {
     return arr.reduce((pre, item) => {
@@ -49,6 +45,8 @@ export default class LeftNav extends Component {
   }
 
   render() {
+
+    const path = this.props.location.pathname
     return (
       <div className="left-nav">
         <NavLink to="/home" className="logo">
@@ -56,10 +54,12 @@ export default class LeftNav extends Component {
           <h1>后台管理</h1>
         </NavLink>
 
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+        <Menu theme="dark" defaultSelectedKeys={[path]} mode="inline">
           {this.menuNodes}
         </Menu>
       </div>
     )
   }
 }
+
+export default withRouter(LeftNav)
