@@ -9,7 +9,6 @@ import {formateDate} from '../../utils/utils'
 import {reqWeather} from '../../api/request'
 import menuList from '../../config/menuConfig'
 
-var title = null
 class Header extends Component {
 
   state = {
@@ -46,21 +45,28 @@ class Header extends Component {
       })
     },1000)
   }
+
+  // 获取标题的函数
   getTitle = (menuList, path) => {
-    if (!menuList) {
-      return 
-    }
-    for (let i = 0; i < menuList.length; i++) {
-      if (menuList[i].key === path) {
-        title = menuList[i].title
-        break
-      }
-      if (menuList[i].children) {
-        const menu = menuList[i].children
-        this.getTitle(menu, path)
-      }
-    }
+    let title = traversal(menuList, path)
     return title
+
+    function traversal(menuList, path) {
+      if (!menuList) {
+        return
+      }
+      for (let i = 0; i < menuList.length; i++) {
+        if (menuList[i].key === path) {
+          title = menuList[i].title
+          break
+        }
+        if (menuList[i].children) {
+          const menu = menuList[i].children
+          traversal(menu, path)
+        }
+      }
+      return title
+    }
   }
 
   // 异步的 ajax 请求放在 componentDidMount 中

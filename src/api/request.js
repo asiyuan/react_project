@@ -30,3 +30,11 @@ export function reqWeather(city) {
   })
 }
 
+// 一级/二级 分类
+export const reqCategory = (parentId) => ajax('/manage/category/list', {parentId} ,'GET')
+
+// 添加分类
+export const reqAddCategory = (categoryName, parentId) => ajax('/manage/category/add', {categoryName, parentId},'POST')
+
+// 修改分类
+export const reqUpdateCategory = (categoryName, categoryId) => ajax('/manage/category/update', {categoryName, categoryId},'POST')
