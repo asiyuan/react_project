@@ -35,6 +35,7 @@ export default class Category extends Component {
     const result = await reqCategory(parentId)
     if (result.status === 0) {
       const categorys = result.data
+      console.log('getCategory()', categorys)
       if (parentId === '0') {
         this.setState({
           categorys
@@ -50,7 +51,7 @@ export default class Category extends Component {
   addCategory = async (categoryName, parentId) => {
     const result = await reqAddCategory(categoryName, parentId)
     if (result.status === 0) {
-      this.getCategory()
+      this.getCategory(parentId)
     }
   }
 
