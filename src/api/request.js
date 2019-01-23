@@ -59,3 +59,16 @@ export const addOrUpdateProduct = (product) => ajax('/manage/product/' + (produc
 export const reqUpdateProductStatus = ({productId, status}) => ajax(
   '/manage/product/updateStatus', {productId, status}, 'POST'
 )
+
+// 用户管理
+export const reqUsers = () => ajax('/manage/user/list', {})
+
+// 根据id获取分类
+export const reqCategoryById = (categoryId) => ajax('/manage/category/info', {categoryId})
+
+// 获取所有角色
+export const reqRoles = () => ajax('/manage/role/list', {})
+
+// 添加角色
+export const reqAddRole = (roleName) => ajax('/manage/role/add', {roleName}, 'POST')
+

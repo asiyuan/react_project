@@ -137,6 +137,7 @@ export default class Category extends Component {
     const columns = this.columns
 
     const {categorys, subCategorys, parentId, parentName} = this.state
+    const category = this.category || {}
 
     return (
       <div>
@@ -184,7 +185,7 @@ export default class Category extends Component {
           onOk={this.updateCategory}
           onCancel={() => this.setState({isUpdateShow: false})}
         >
-          <UpdateForm setForm={(form) => this.form=form} />
+          <UpdateForm setForm={(form) => this.form=form} categoryName={category.name}/>
         </Modal>
       </div>
     )
@@ -247,13 +248,13 @@ class UpdateForm extends Component {
   render () {
     const {categoryName} = this.props
     const {getFieldDecorator} = this.props.form
-
+    console.log('UpdateForm', categoryName)
     return (
       <Form>
         <Item>
           {
             getFieldDecorator('categoryName', {
-              initialValue: ''
+              initialValue: categoryName
             })(
               <Input placeholder='请输入分类名称'/>
             )

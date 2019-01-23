@@ -3,14 +3,45 @@ import {
   Icon,
   List
 } from 'antd'
+import {reqCategoryById} from '../../api/request'
 import './index.less'
 
 const Item = List.Item
 export default class ProductDetail extends Component {
 
+  state = {
+    cName1: '',
+    cName2: ''
+  }
+
+  getCategoryName = async () => {
+    const {categoryId, pCategoryId } = this.props.location.state
+    console.log(categoryId, pCategoryId)
+    if (pCategoryId === '0') {
+      const result = await reqCategoryById(categoryId)
+      const cName1 = result.data.name
+      this.setState({cName1})
+    } else {
+      const result1 = await reqCategoryById(pCategoryId)
+      const result2 = await reqCategoryById(categoryId)
+      const cName1 = result1.data.name
+      const cName2 = result2.data.name
+      this.setState({
+        cName1,
+        cName2,
+      })
+    }
+  }
+
+  componentDidMount() {
+    this.getCategoryName()
+  }
+
   render() {
 
     const {name, desc, price, categoryId, pCategoryId, imgs, detail} = this.props.location.state
+    const {cName1, cName2} = this.state
+    console.log(this.state)
     return (
       <div className="product-detail">
         <h2>
@@ -33,7 +64,7 @@ export default class ProductDetail extends Component {
           </Item>
           <Item>
             <span className="left">商品分类:</span>
-            <span className="right"></span>
+            <span className="right">{cName1 + (cName2 ? '-->'+ cName2 : '')}</span>
           </Item>
           <Item>
             <span className="left">商品图片:</span>
