@@ -16,7 +16,6 @@ export function reqWeather(city) {
 
   // 返回 promise 对象
   return new Promise((resolve, reject) => {
-    console.log('reqWeather()')
     jsonp(url, {
       param: 'callback'
     }, (err, response) => {
@@ -72,3 +71,9 @@ export const reqRoles = () => ajax('/manage/role/list', {})
 // 添加角色
 export const reqAddRole = (roleName) => ajax('/manage/role/add', {roleName}, 'POST')
 
+// 更新角色
+export const reqUpdateMenus = (role) => ajax('/manage/role/update', role, 'POST')
+
+// 添加或修改用户
+export const reqAddOrUpdateUser = (user) => ajax('/manage/user/' +
+  (user._id ? 'update' : 'add'), user, 'POST')

@@ -11,7 +11,7 @@ import {
   Tree
 } from 'antd'
 
-import {reqRoles, reqAddRole} from '../../api/request'
+import {reqRoles, reqAddRole, reqUpdateMenus} from '../../api/request'
 import {formateDate} from '../../utils/utils'
 import menuList from '../../config/menuConfig'
 
@@ -23,7 +23,8 @@ export default class Role extends Component {
     roles: [],             // 角色列表
     isAddShow: false,      // 添加模态框的显示状态
     isUpdateShow: false,
-    role: {}    // 当前选中的角色
+    role: {},    // 当前选中的角色
+    menus: []    // 当前角色所有权限的数组
   }
 
   /*
@@ -83,9 +84,33 @@ export default class Role extends Component {
     return {
       onClick: (event) => {
         this.setState({
-          role
+          role,
+          menus: role.menus
         })
       }
+    }
+  }
+
+  // 设置选中的权限
+  setCheckMenu = (menus) => {
+    this.setState({
+      menus
+    })
+  }
+
+  handleUpdateMenus = async (role) => {
+    this.setState({
+      isUpdateShow: false
+    })
+    const menus = this.state.menus
+    role.menus = menus
+    role.auth_name = 'admin'
+    const result = await reqUpdateMenus(role)
+    if (result.status === 0) {
+      message.success('更改权限成功！')
+      this.getRoles()
+    } else {
+      message.error('更改权限失败')
     }
   }
 
@@ -101,10 +126,10 @@ export default class Role extends Component {
 
   render() {
 
-    const {roles, role, isAddShow, isUpdateShow} = this.state
+    const {roles, role, isAddShow, isUpdateShow, menus} = this.state
     const rowSelection = {
       type: 'radio',
-      selectedRowKeys: [role._id],
+      selectedRowKeys: [role._id],           // 选中每行的 key
       onChange: (selectedRowKeys, selectedRows) => {
         this.setState({
           role: selectedRows[0]
@@ -140,10 +165,10 @@ export default class Role extends Component {
         <Modal
           title="设置角色权限"
           visible={isUpdateShow}
-          onOk={this.handleOk}
-          onCancel={() => this.setState({isUpdateShow: false})}
+          onOk={() => this.handleUpdateMenus(role)}
+          onCancel={() => this.setState({isUpdateShow: false, menus: role.menus})}
         >
-          <UpdateRoleForm roleName={role.name}/>
+          <UpdateRoleForm roleName={role.name} menus={menus} setCheckMenu={this.setCheckMenu}/>
         </Modal>
 
       </div>
@@ -183,10 +208,13 @@ class UpdateRoleForm extends Component {
 
   static propTypes = {
     roleName: PropTypes.string,
+    menus: PropTypes.array,
+    setCheckMenu: PropTypes.func
   }
 
   onCheck = (checkedKeys, info) => {
     console.log('onCheck', checkedKeys, info);
+    this.props.setCheckMenu(checkedKeys)
   }
 
   // 动态生成树形控件
@@ -221,7 +249,7 @@ class UpdateRoleForm extends Component {
           checkable
           defaultExpandAll
           onCheck={this.onCheck}
-          // checkedKeys={menus}
+          checkedKeys={menus}   // 根据状态数据勾选的，所以要改变状态
         >
           <TreeNode title="平台权限" key="all">
             {this.initTreeNode(menuList)}
@@ -231,9 +259,6 @@ class UpdateRoleForm extends Component {
     )
   }
 }
-
-
-
 
 AddRoleForm = Form.create()(AddRoleForm)
 UpdateRoleForm = Form.create()(UpdateRoleForm)

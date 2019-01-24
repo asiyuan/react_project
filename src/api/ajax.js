@@ -26,3 +26,23 @@ export default function ajax(url, data = {}, method = 'GET') {
   })
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
